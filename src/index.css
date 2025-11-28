@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	scroll-behavior: smooth;
+}
+
+.dark {
+	color-scheme: dark;
+}
+
+.container-responsive {
+	@apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Modern background with mesh gradient */
+body {
+	@apply bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900;
+	background-image: 
+		var(--tw-gradient-from), 
+		var(--tw-gradient-to), 
+		theme('backgroundImage.gradient-mesh'),
+		theme('backgroundImage.dotted');
+	background-size: auto, auto, 100% 100%, theme('backgroundSize.dotted');
+	background-position: center top, center bottom, center, center;
+	min-height: 100vh;
+}
+
+/***** Primitives *****/
+.card {
+	@apply rounded-2xl border border-slate-200/50 dark:border-slate-800/70 
+		bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl shadow-glass
+		transition-all duration-300 hover:shadow-glass-lg hover:border-slate-300/60 dark:hover:border-slate-700/80;
+}
+
+.card-interactive {
+	@apply card hover:scale-[1.02] hover:-translate-y-1;
+}
+
+.btn {
+	@apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl 
+		font-medium transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none
+		active:scale-95;
+}
+
+.btn-primary {
+	@apply btn bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 
+		text-white shadow-lg shadow-brand-500/30 hover:shadow-xl hover:shadow-brand-500/40
+		ring-1 ring-brand-400/20;
+}
+
+.btn-secondary {
+	@apply btn bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 
+		text-white shadow-lg shadow-violet-500/30 hover:shadow-xl hover:shadow-violet-500/40;
+}
+
+.btn-ghost {
+	@apply btn hover:bg-slate-100/80 dark:hover:bg-slate-800/80 
+		hover:shadow-md dark:hover:shadow-slate-900/50;
+}
+
+.btn-outline {
+	@apply btn border-2 border-slate-200 dark:border-slate-700 
+		hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-600;
+}
+
+.input, .select, .textarea {
+	@apply px-4 py-3 rounded-xl bg-white/80 dark:bg-slate-900/70 
+		border border-slate-200/60 dark:border-slate-800/70 
+		focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400/50
+		transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500
+		hover:border-slate-300/70 dark:hover:border-slate-700/80;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+	@apply shadow-lg shadow-brand-500/10;
+}
+
+.table {
+	@apply w-full text-sm;
+}
+.table thead {
+	@apply bg-slate-100/80 dark:bg-slate-800/60;
+}
+.table th, .table td {
+	@apply p-3;
+}
+.table tbody tr {
+	@apply transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30;
+}
+
+/* Utility classes */
+.text-gradient {
+	@apply bg-gradient-to-r from-brand-600 to-sky-500 bg-clip-text text-transparent;
+}
+
+.text-gradient-purple {
+	@apply bg-gradient-to-r from-violet-600 to-purple-500 bg-clip-text text-transparent;
+}
+
+.shimmer-effect {
+	@apply relative overflow-hidden;
+}
+
+.shimmer-effect::after {
+	content: '';
+	@apply absolute inset-0 bg-shimmer bg-[length:200%_100%] animate-shimmer;
+}

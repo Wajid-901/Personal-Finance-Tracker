@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" class="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="Personal Finance Tracker - Take control of your finances with powerful insights, smart categorization, and local-first privacy. Track income, expenses, and visualize your spending habits." />
+		<meta name="keywords" content="finance tracker, expense tracker, budget app, personal finance, money management" />
+		<meta name="author" content="Personal Finance Tracker" />
+		<meta name="theme-color" content="#0ea5e9" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>Personal Finance Tracker - Manage Your Money Smartly</title>
+		<script>
+	
+	(function() {
+			try {
+				var pref = localStorage.getItem('pft-theme');
+				if (pref === 'light') document.documentElement.classList.remove('dark');
+				else document.documentElement.classList.add('dark');
+			} catch (e) {}
+		})();
+		</script>
+	</head>
+	<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>

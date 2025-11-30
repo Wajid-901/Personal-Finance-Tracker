@@ -6,6 +6,8 @@ import { saveAs } from '../modules/settings/exportUtil';
 import jsPDF from 'jspdf';
 import { useCurrencyFormatter, sumBy } from '../modules/utils/money';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export const ProfilePage: React.FC = () => {
     const { transactions, categories, preferences, setDarkMode, setCurrency, resetSampleData } = useApp();
     const currentUser = getCurrentUser();
@@ -35,7 +37,7 @@ export const ProfilePage: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/user/profile', {
+            const response = await fetch(`${API_URL}/user/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +86,7 @@ export const ProfilePage: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/user/password', {
+            const response = await fetch(`${API_URL}/user/password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,7 +127,7 @@ export const ProfilePage: React.FC = () => {
         if (!doubleConfirm) return;
 
         try {
-            const response = await fetch('http://localhost:5000/api/user/account', {
+            const response = await fetch(`${API_URL}/user/account`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${currentUser?.token}`
@@ -308,7 +310,7 @@ export const ProfilePage: React.FC = () => {
             try {
                 const base64String = reader.result as string;
 
-                const response = await fetch('http://localhost:5000/api/user/avatar', {
+                const response = await fetch(`${API_URL}/user/avatar`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

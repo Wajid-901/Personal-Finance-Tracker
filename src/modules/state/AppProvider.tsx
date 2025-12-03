@@ -22,7 +22,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 					
 					// Load preferences from localStorage
 					const darkMode = localStorage.getItem('pft-theme') === 'dark';
-					const currency = localStorage.getItem('pft-currency') || 'USD';
+					const currency = localStorage.getItem('pft-currency') || 'INR';
 					
 					setState({
 						transactions,

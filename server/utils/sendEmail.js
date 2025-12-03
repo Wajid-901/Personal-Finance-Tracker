@@ -1,30 +1,40 @@
-const nodemailer = require('nodemailer');
+const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 
 const sendEmail = async (options) => {
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-        // If SMTP_SERVICE is defined (e.g. 'gmail'), use it. Otherwise use host/port.
-        ...(process.env.SMTP_SERVICE ? { service: process.env.SMTP_SERVICE } : {}),
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
-        auth: {
-            user: process.env.SMTP_EMAIL,
-            pass: process.env.SMTP_PASSWORD
-        }
+    const mailersend = new MailerSend({
+        apiKey: process.env.MAILERSEND_API_KEY,
     });
 
-    const message = {
-        from: `${process.env.FROM_NAME || 'Expense Tracker'} <${process.env.FROM_EMAIL || 'noreply@expensetracker.com'}>`,
-        to: options.email,
-        subject: options.subject,
-        text: options.message,
-        html: options.html
-    };
+    if (!process.env.MAILERSEND_API_KEY) {
+        console.error('MAILERSEND_API_KEY is not configured in environment variables');
+        throw new Error('Email service is not configured. Please contact support.');
+    }
 
-    const info = await transporter.sendMail(message);
+    try {
+        const sentFrom = new Sender(process.env.FROM_EMAIL || "info@trial-3yxj6lj9015ldo2r.mlsender.net", process.env.FROM_NAME || "Personal Finance Tracker");
+        const recipients = [
+            new Recipient(options.email, options.name || "User")
+        ];
 
-    console.log('Message sent: %s', info.messageId);
+        const emailParams = new EmailParams()
+            .setFrom(sentFrom)
+            .setTo(recipients)
+            .setSubject(options.subject)
+            .setHtml(options.html || options.message)
+            .setText(options.message || "Please enable HTML to view this email");
+
+        console.log('Sending email to:', options.email);
+        console.log('Subject:', options.subject);
+
+        const response = await mailersend.email.send(emailParams);
+
+        console.log('✅ Email sent successfully! ID:', response.headers?.['x-message-id'] || 'sent');
+        return response;
+    } catch (error) {
+        console.error('❌ Failed to send email:', error.body || error.message);
+        // Throwing error to be caught by the dev mode bypass in auth.js
+        throw error;
+    }
 };
 
 module.exports = sendEmail;

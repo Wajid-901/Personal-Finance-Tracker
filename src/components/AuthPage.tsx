@@ -44,10 +44,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
             } else {
                 // Register
                 const result = await registerUser(email, password, name);
-                if (result.success && result.user) {
-                    setCurrentUser(result.user);
-                    setSuccess('Account created successfully!');
-                    setTimeout(() => onSuccess(), 500);
+                if (result.success) {
+                    setSuccess(result.message || 'Account created successfully! Please login to continue.');
+                    setPassword('');
+                    setName('');
+                    // Switch to login mode after successful registration
+                    setTimeout(() => {
+                        setIsLogin(true);
+                    }, 1500);
                 } else {
                     setError(result.error || 'Registration failed');
                 }
@@ -151,7 +155,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     className="input w-full"
-                                    placeholder="John Doe"
+                                    placeholder="Enter your name"
                                     required
                                 />
                             </div>

@@ -14,7 +14,7 @@ const API_URL = `${BASE_URL}/auth`;
 const USER_STORAGE_KEY = 'pft_user';
 
 // Register a new user
-export async function registerUser(email: string, password: string, name: string): Promise<{ success: boolean; error?: string; user?: User }> {
+export async function registerUser(email: string, password: string, name: string): Promise<{ success: boolean; error?: string; message?: string }> {
     try {
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
@@ -30,11 +30,8 @@ export async function registerUser(email: string, password: string, name: string
             return { success: false, error: data.message || 'Registration failed' };
         }
 
-        if (data.token) {
-            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data));
-        }
-
-        return { success: true, user: data };
+        // Don't auto-login after registration
+        return { success: true, message: data.message || 'Registration successful! Please login to continue.' };
     } catch (error) {
         return { success: false, error: 'Network error. Please check your connection.' };
     }

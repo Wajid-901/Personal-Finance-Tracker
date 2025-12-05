@@ -14,8 +14,27 @@ const app = express();
 app.use(helmet());
 
 // Cross-Origin Resource Sharing (CORS)
+// Cross-Origin Resource Sharing (CORS)
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // Dynamic allow list
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'http://127.0.0.1:5173',
+            process.env.FRONTEND_URL // Add the environment variable if set
+        ];
+
+        // Also allow local network IPs for mobile testing (192.168.x.x or 10.x.x.x)
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('192.168.') || origin.includes('10.')) {
+            callback(null, true);
+        } else {
+            console.log('CORS Blocked Origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 

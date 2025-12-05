@@ -109,8 +109,8 @@ router.post('/forgotpassword', async (req, res) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // Create reset url - use frontend URL from environment or default to localhost for dev
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    // Create reset url - use request origin (dynamic) or environment variable, fallback to localhost
+    const frontendUrl = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetUrl = `${frontendUrl}/resetpassword/${resetToken}`;
 
     const { getPasswordResetEmail } = require('../utils/emailTemplates');
@@ -121,8 +121,10 @@ router.post('/forgotpassword', async (req, res) => {
     });
 
     console.log('--------------------------------------------------');
-    console.log('DEV MODE: Password Reset URL:');
-    console.log(resetUrl);
+    console.log('Forgot Password Request Received');
+    console.log('Email:', req.body.email);
+    console.log('Frontend URL:', frontendUrl);
+    console.log('Reset URL:', resetUrl);
     console.log('--------------------------------------------------');
 
     try {
@@ -132,20 +134,16 @@ router.post('/forgotpassword', async (req, res) => {
             html
         });
 
+        console.log('SUCCESS: Email sent to', user.email);
         res.status(200).json({ success: true, data: 'Email sent' });
     } catch (err) {
         console.error('Email send error:', err);
         
-        // In development/testing, if email fails (likely due to Mailersend free tier), 
-        // we still want to allow the user to reset password using the console link.
-        // So we return success but log the error.
-        console.log('************************************************************');
-        console.log('WARNING: Email failed to send (likely Mailersend free tier limit).');
-        console.log('You can still reset password using the link logged above.');
-        console.log('************************************************************');
-
-        // Return success to frontend so user sees "Email sent" message
-        res.status(200).json({ success: true, data: 'Email simulated (check console)' });
+        // Return 500 error so frontend knows it failed
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Email could not be sent. Please try again later.' 
+        });
         
         // Don't clear the token so the link actually works!
         // user.resetPasswordToken = undefined;

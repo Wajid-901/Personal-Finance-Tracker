@@ -1,38 +1,37 @@
-const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
+const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
-    const mailersend = new MailerSend({
-        apiKey: process.env.MAILERSEND_API_KEY,
+    // Create a transporter using Brevo SMTP
+    const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST || 'smtp-relay.brevo.com',
+        port: parseInt(process.env.EMAIL_PORT || '587'),
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.EMAIL_USER || process.env.SMTP_EMAIL, // Support both variable names
+            pass: process.env.EMAIL_PASS, // Your Brevo SMTP Key
+        },
+        family: 4, // Force IPv4 to avoid IPv6 connection issues
     });
 
-    if (!process.env.MAILERSEND_API_KEY) {
-        console.error('MAILERSEND_API_KEY is not configured in environment variables');
-        throw new Error('Email service is not configured. Please contact support.');
-    }
+    // Email options
+    const mailOptions = {
+        from: `${process.env.FROM_NAME || 'Personal Finance Tracker'} <${process.env.FROM_EMAIL || process.env.EMAIL_USER || process.env.SMTP_EMAIL}>`,
+        to: options.email,
+        subject: options.subject,
+        html: options.html || options.message,
+        text: options.message || "Please enable HTML to view this email"
+    };
 
     try {
-        const sentFrom = new Sender(process.env.FROM_EMAIL || "info@trial-3yxj6lj9015ldo2r.mlsender.net", process.env.FROM_NAME || "Personal Finance Tracker");
-        const recipients = [
-            new Recipient(options.email, options.name || "User")
-        ];
-
-        const emailParams = new EmailParams()
-            .setFrom(sentFrom)
-            .setTo(recipients)
-            .setSubject(options.subject)
-            .setHtml(options.html || options.message)
-            .setText(options.message || "Please enable HTML to view this email");
-
         console.log('Sending email to:', options.email);
         console.log('Subject:', options.subject);
-
-        const response = await mailersend.email.send(emailParams);
-
-        console.log('✅ Email sent successfully! ID:', response.headers?.['x-message-id'] || 'sent');
-        return response;
+        
+        const info = await transporter.sendMail(mailOptions);
+        
+        console.log('✅ Email sent successfully! Message ID:', info.messageId);
+        return info;
     } catch (error) {
-        console.error('❌ Failed to send email:', error.body || error.message);
-        // Throwing error to be caught by the dev mode bypass in auth.js
+        console.error('❌ Failed to send email:', error);
         throw error;
     }
 };

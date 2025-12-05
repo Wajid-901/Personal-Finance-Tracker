@@ -3,8 +3,11 @@ const sendEmail = require('./utils/sendEmail');
 
 dotenv.config();
 
-console.log('Testing Resend Email...');
-console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY ? 'Set ✅' : 'Missing ❌');
+console.log('Testing Email Service (Brevo)...');
+console.log('EMAIL_HOST:', process.env.EMAIL_HOST || 'Default: smtp-relay.brevo.com');
+console.log('EMAIL_PORT:', process.env.EMAIL_PORT || 'Default: 587');
+console.log('EMAIL_USER:', (process.env.EMAIL_USER || process.env.SMTP_EMAIL) ? 'Set ✅' : 'Missing ❌');
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set ✅' : 'Missing ❌');
 
 sendEmail({
     email: 'abdulwajid845433@gmail.com', // Your verified email

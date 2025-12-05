@@ -2,24 +2,26 @@ import React from 'react';
 import { Moon, Sun, Wallet, LineChart, List, Grid2x2, User as UserIcon, Menu, X } from 'lucide-react';
 import { useApp } from '../modules/state/AppProvider';
 import { getCurrentUser } from '../modules/auth/authUtils';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-interface HeaderProps {
-    route: 'dashboard' | 'transactions' | 'categories' | 'profile';
-    onNavigate: (r: HeaderProps['route']) => void;
-}
-
-export const Header: React.FC<HeaderProps> = ({ route, onNavigate }) => {
+export const Header: React.FC = () => {
     const { preferences, setDarkMode } = useApp();
     const currentUser = getCurrentUser();
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
     const toggle = () => setDarkMode(!preferences.darkMode);
     
-    const NavBtn: React.FC<{ id: HeaderProps['route']; icon: React.ReactNode; label: string }> = ({ id, icon, label }) => {
-        const active = route === id;
+    const location = useLocation();
+    const navigate = useNavigate();
+    
+    // Normalize path to match ids
+    const currentPath = location.pathname === '/' ? 'dashboard' : location.pathname.substring(1);
+
+    const NavBtn: React.FC<{ id: string; icon: React.ReactNode; label: string }> = ({ id, icon, label }) => {
+        const active = currentPath === id || (id === 'dashboard' && location.pathname === '/');
         return (
             <button 
                 onClick={() => {
-                    onNavigate(id);
+                    navigate(id === 'dashboard' ? '/' : `/${id}`);
                     setMobileMenuOpen(false);
                 }} 
                 className={`btn-ghost rounded-xl transition-all duration-200 w-full sm:w-auto ${active ? 'bg-gradient-to-r from-brand-500/10 to-sky-500/10 ring-2 ring-brand-500/30 shadow-lg shadow-brand-500/10' : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/80'}`} 
@@ -35,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ route, onNavigate }) => {
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-slate-950/80 border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
             <div className="container-responsive py-4 flex items-center justify-between gap-3">
                 <button 
-                    onClick={() => onNavigate('dashboard')} 
+                    onClick={() => navigate('/')} 
                     className="flex items-center gap-3 font-bold hover:opacity-80 transition-opacity cursor-pointer"
                     aria-label="Go to dashboard"
                 >
@@ -57,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ route, onNavigate }) => {
                     {/* Profile Button - Desktop */}
                     {currentUser && (
                         <button
-                            onClick={() => onNavigate('profile')}
+                            onClick={() => navigate('/profile')}
                             className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 transition-all duration-200"
                             aria-label="View profile"
                         >

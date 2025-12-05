@@ -6,7 +6,7 @@ import { saveAs } from '../modules/settings/exportUtil';
 import jsPDF from 'jspdf';
 import { useCurrencyFormatter, sumBy } from '../modules/utils/money';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '').replace(/\/api$/, '') + '/api';
 
 export const ProfilePage: React.FC = () => {
     const { transactions, categories, preferences, setDarkMode, setCurrency, resetSampleData } = useApp();

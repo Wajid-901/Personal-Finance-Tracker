@@ -22,3 +22,14 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+
+staticSites:
+  - name: expense-tracker-frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: expense-tracker-api
+          property: url

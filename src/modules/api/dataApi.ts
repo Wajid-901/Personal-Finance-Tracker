@@ -2,7 +2,7 @@ import { getCurrentUser } from '../auth/authUtils';
 import { Transaction, Category } from '../state/types';
 export type { Transaction, Category };
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '').replace(/\/api$/, '') + '/api';
 
 // Helper to get auth headers
 function getAuthHeaders() {
